@@ -8,6 +8,19 @@ app_license = "mit"
 # Apps
 # ------------------
 
+doc_events = {
+    "Employee Checkin": {
+        "after_insert": [
+            # Custom attendance logic (optional)
+            # "my_custom_app.api.custom_attendance.mark_attendance_with_off_shift",
+
+            # Send push notifications on checkin
+            "my_custom_app.api.send_checkin_notification.send_checkin_notification"
+        ]
+    }
+}
+
+
 # doc_events = {
 #     "Employee Checkin": {
 #         "after_insert": "my_custom_app.api.custom_attendance.mark_attendance_with_off_shift"
@@ -16,23 +29,24 @@ app_license = "mit"
 
 
 
-# Expose API endpoint
-override_whitelisted_methods = {
-    "my_custom_app.api.register_device.register_device": "my_custom_app.api.register_device.register_device"
-}
 
-# Trigger events on Employee Checkin
-doc_events = {
-    "Employee Checkin": {
-        "after_insert": [
-            # "my_custom_app.api.custom_attendance.mark_attendance_with_off_shift",  # your custom attendance logic
-            "my_custom_app.api.send_checkin_notification.send_checkin_notification"  # push notifications
-        ]
-    }
-}
-override_whitelisted_methods = {
-    "my_custom_app.api.leave_api.get_total_leave_requests": "my_custom_app.api.total_leave_request_count.get_total_leave_requests"
-}
+# # Expose API endpoint
+# override_whitelisted_methods = {
+#     "my_custom_app.api.register_device.register_device": "my_custom_app.api.register_device.register_device"
+# }
+
+# # Trigger events on Employee Checkin
+# doc_events = {
+#     "Employee Checkin": {
+#         "after_insert": [
+#             # "my_custom_app.api.custom_attendance.mark_attendance_with_off_shift",  # your custom attendance logic
+#             "my_custom_app.api.send_checkin_notification.send_checkin_notification"  # push notifications
+#         ]
+#     }
+# }
+# override_whitelisted_methods = {
+#     "my_custom_app.api.leave_api.get_total_leave_requests": "my_custom_app.api.total_leave_request_count.get_total_leave_requests"
+# }
 
 
 # required_apps = []
