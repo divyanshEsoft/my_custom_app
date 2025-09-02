@@ -5,6 +5,7 @@ def send_push_notification(token, title, body):
     """Send push notification to FCM"""
     """ the  fcm_server_key key we are using from the sites-> sitename -> sit_congig.json """
     server_key = frappe.conf.get("fcm_server_key")
+   
     if not server_key:
         frappe.throw("FCM Server Key not configured in site_config.json")
 
@@ -13,6 +14,7 @@ def send_push_notification(token, title, body):
         "Authorization": "key=" + server_key,
         "Content-Type": "application/json"
     }
+    
     payload = {
         "to": token,
         "notification": {

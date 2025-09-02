@@ -1,7 +1,7 @@
 # erpnext_mobile_notify/api.py
 import frappe
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=False)
 def register_device(employee, device_id, fcm_token, platform=None):
     """
     Register or update employee device for push notifications.
