@@ -3,6 +3,7 @@ from frappe import _
 
 @frappe.whitelist()
 def get_total_leave_requests(employee: str, month: str, year: str):
+    
         """
         Get total leave requests for an employee in a given month and year.
         

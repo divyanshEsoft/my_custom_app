@@ -3,7 +3,7 @@ from frappe import _
 
 
 @frappe.whitelist(allow_guest=False)
-def get_total_attendance_counts(employee , from_date=None , to_date=None):
+def get_total_attendance_counts(employee=None , from_date=None , to_date=None):
      """
     Get attendance counts for an employee.
     Present-like = Present (1) + Half Day (0.5) + Work From Home (1)
