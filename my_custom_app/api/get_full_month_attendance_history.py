@@ -9,8 +9,8 @@ def get_full_month_attendance(**kwargs):
     Custom API to return full attendance data for a date range.
 
     - Returns all dates between from_date and to_date.
-    - Fills missing past days as 'Absent' virtual records.
-    - Filters out irrelevant fields like naming_series, leave_type, etc.
+    - Fills missing past days as 'Absent' unless it's a holiday.
+    - Filters out irrelevant fields.
     - Returns clean, consistent structure for frontend use.
     """
     try:
@@ -43,6 +43,27 @@ def get_full_month_attendance(**kwargs):
         if start_date > today:
             return {"data": []}
 
+        # -------------------- EMPLOYEE DETAILS --------------------
+        emp = frappe.get_doc("Employee", employee)
+        emp_name = emp.employee_name
+        company = emp.company
+        department = getattr(emp, "department", None)
+        holiday_list = getattr(emp, "holiday_list", None)
+
+        # -------------------- GET HOLIDAY DATES --------------------
+        holiday_dates = set()
+        if holiday_list:
+            holidays = frappe.get_all(
+                "Holiday",
+                filters={
+                    "parent": holiday_list,
+                    "holiday_date": ["between", [start_date, end_date]],
+                },
+                fields=["holiday_date"],
+            )
+            holiday_dates = {h["holiday_date"].strftime(
+                "%Y-%m-%d") for h in holidays}
+
         # -------------------- FIELD SELECTION --------------------
         meta = frappe.get_meta("Attendance")
         valid_fields = [
@@ -50,12 +71,13 @@ def get_full_month_attendance(**kwargs):
             if f.fieldtype not in ["Table", "HTML", "Section Break", "Column Break"]
         ]
 
-        # Ensure key fields exist
-        for key in ["name", "employee", "attendance_date", "status", "company", "in_time", "out_time", "working_hours", "shift", "late_entry", "early_exit"]:
+        for key in ["name", "employee", "attendance_date", "status", "company",
+                    "in_time", "out_time", "working_hours", "shift",
+                    "late_entry", "early_exit"]:
             if key not in valid_fields:
                 valid_fields.append(key)
 
-        # Fetch attendance records
+        # -------------------- FETCH ATTENDANCE RECORDS --------------------
         records = frappe.get_all(
             "Attendance",
             filters={"employee": employee, "attendance_date": [
@@ -63,12 +85,6 @@ def get_full_month_attendance(**kwargs):
             fields=valid_fields,
             order_by="attendance_date desc",
         )
-
-        # -------------------- EMPLOYEE DETAILS --------------------
-        emp = frappe.get_doc("Employee", employee)
-        emp_name = emp.employee_name
-        company = emp.company
-        department = getattr(emp, "department", None)
 
         # -------------------- MAP EXISTING RECORDS --------------------
         existing = {}
@@ -98,10 +114,29 @@ def get_full_month_attendance(**kwargs):
         current = start_date
         while current <= end_date:
             cdate = current.strftime("%Y-%m-%d")
+
             if cdate in existing:
                 data.append(existing[cdate])
+            elif cdate in holiday_dates:
+                # Add virtual holiday record
+                data.append({
+                    "name": f"VIRTUAL-HOLIDAY-{employee}-{cdate}",
+                    "employee": employee,
+                    "employee_name": emp_name,
+                    "attendance_date": cdate,
+                    "status": "Holiday",
+                    "company": company,
+                    "department": department,
+                    "shift": None,
+                    "in_time": None,
+                    "out_time": None,
+                    "working_hours": 0.0,
+                    "late_entry": 0,
+                    "early_exit": 0,
+                    "is_virtual": True,
+                })
             elif current < today:
-                # Create virtual Absent record
+                # Add virtual absent record (not a holiday)
                 data.append({
                     "name": f"VIRTUAL-ABSENT-{employee}-{cdate}",
                     "employee": employee,
@@ -118,9 +153,10 @@ def get_full_month_attendance(**kwargs):
                     "early_exit": 0,
                     "is_virtual": True,
                 })
+
             current += timedelta(days=1)
 
-        # Sort descending by date
+        # -------------------- SORT DESCENDING --------------------
         data.sort(key=lambda x: x["attendance_date"], reverse=True)
 
         return {"data": data}
