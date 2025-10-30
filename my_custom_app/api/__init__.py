@@ -10,3 +10,6 @@ from .register_user_device import register_device
 from .leave_type_balance_count import get_leave_type_balance_count
 
 from .total_leave_request_count import get_total_leave_requests
+
+
+from .get_full_month_attendance_history import get_full_month_attendance

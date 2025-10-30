@@ -11,6 +11,7 @@ app_license = "mit"
 doc_events = {
     "Employee Checkin": {
         "after_insert": [
+            "my_custome_app.api."
             # Custom attendance logic (optional)
             # "my_custom_app.api.custom_attendance.mark_attendance_with_off_shift",
 
