@@ -8,20 +8,50 @@ app_license = "mit"
 # Apps
 # ------------------
 
+# doc_events = {
+#     "Employee Checkin": {
+
+        
+#         # "after_insert": [
+#         #     "my_custom_app.api."
+#         #     # Custom attendance logic (optional)
+#         #     # "my_custom_app.api.custom_attendance.mark_attendance_with_off_shift",
+
+#         #     # Send push notifications on checkin
+
+
+#         #     # "my_custom_app.api.send_checkin_notification.send_checkin_notification"
+#         # ]
+#     }
+# }
+
+
 doc_events = {
     "Employee Checkin": {
-        # "after_insert": [
-        #     "my_custom_app.api."
-        #     # Custom attendance logic (optional)
-        #     # "my_custom_app.api.custom_attendance.mark_attendance_with_off_shift",
-
-        #     # Send push notifications on checkin
-
-
-        #     # "my_custom_app.api.send_checkin_notification.send_checkin_notification"
-        # ]
+        "after_insert": "my_custom_app.api.notifications.checkin.notify"
+    },
+    "Leave Application": {
+        "on_update_after_submit": "my_custom_app.api.notifications.leave.notify"
+    },
+    "Attendance": {
+        "on_update_after_submit": "my_custom_app.api.notifications.attendance.notify"
     }
 }
+
+
+# doc_events = {
+#     "Employee Checkin": {
+#         "after_insert": "my_custom_app.api.notifications.on_checkin"
+#     },
+#     "Leave Application": {
+#         "after_insert": "my_custom_app.api.notifications.on_leave_apply",
+#         "on_update_after_submit": "my_custom_app.api.notifications.on_leave_status_change"
+#     },
+#     "Attendance Request": {
+#         "after_insert": "my_custom_app.api.notifications.on_attendance_change_request"
+#     }
+# }
+
 
 
 # doc_events = {

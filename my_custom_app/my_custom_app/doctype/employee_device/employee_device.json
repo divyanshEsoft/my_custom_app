@@ -8,7 +8,8 @@
   "employee",
   "device_id",
   "fcm_token",
-  "platform"
+  "platform",
+  "is_active"
  ],
  "fields": [
   {
@@ -41,12 +42,18 @@
    "fieldtype": "Select",
    "label": "Platform",
    "options": "Android\niOS\nWeb"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-08 15:49:58.144581",
+ "modified": "2026-01-14 11:08:58.954281",
  "modified_by": "Administrator",
  "module": "My custom app",
  "name": "Employee Device",
