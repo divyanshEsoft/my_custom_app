@@ -63,7 +63,7 @@ def send_fcm_notification(token, title, body, data=None):
     if response.status_code != 200:
         frappe.log_error(
             response.text,
-            "❌ FCM Send Error"
+            "FCM Send Error"
         )
 
     return response.json()

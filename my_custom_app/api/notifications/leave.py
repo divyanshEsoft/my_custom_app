@@ -1,5 +1,5 @@
 import frappe
-from my_custom_app.api.firebase_utils import notify_employee
+from my_custom_app.api.notify_employee import notify_employee
 
 def notify(doc, method):
     frappe.logger().info(
